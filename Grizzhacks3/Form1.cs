@@ -24,17 +24,5 @@ namespace Grizzhacks3
             server.start();
         }
 
-        private void tRefresh_Tick(object sender, EventArgs e)
-        {
-            if(textBox1.Text != server.log)
-            {
-                textBox1.Text = server.log;
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            server.sendDataToAll();
-        }
     }
 }

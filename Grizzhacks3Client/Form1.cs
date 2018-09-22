@@ -13,6 +13,7 @@ namespace Grizzhacks3Client
     public partial class Form1 : Form
     {
         tcpClient client = new tcpClient();
+        int pcID;
 
         public Form1()
         {
@@ -21,26 +22,31 @@ namespace Grizzhacks3Client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            client.sendData(textBox1.Text);
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             client.start();
             tUpdate.Enabled = true;
+            Random r = new Random();
+            pcID = r.Next(10000, 99999);
+            label1.Text = "ID: " + pcID;
+            client.sendData("pc;" + pcID);
         }
 
         private void tUpdate_Tick(object sender, EventArgs e)
         {
-            try
+            if (client.recievedData.Count > 0)
             {
-                if (txtLog.Text != client.recievedData.First<String>())
+                if (client.recievedData.First<String>().Contains("image"))
                 {
-                    txtLog.Text = client.recievedData.First<String>();
+                    clsImage img = new clsImage(client.recievedData.First<String>().Split(';')[2]);
+                    ucImage newImageControl = new ucImage(img);
+                    flpMain.Controls.Add(newImageControl);
                 }
+                client.recievedData.Clear();
             }
-            catch { }
-
         }
     }
 }

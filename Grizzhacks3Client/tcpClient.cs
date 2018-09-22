@@ -12,7 +12,7 @@ namespace Grizzhacks3Client
     class tcpClient
     {
         TcpClient client = new TcpClient();
-        String ip = "127.0.0.1";
+        String ip = "35.237.232.103";
         public List<string> recievedData = new List<string>();
         Boolean running = true;
 
@@ -42,10 +42,15 @@ namespace Grizzhacks3Client
                 while (running)
                 {
                     String data = sr.ReadLine();
-                    if(data != "")
+                    if(data != "" && data != null)
                     {
-                        recievedData.Add(data);
+                        if (!(recievedData.Contains(data)))
+                        {
+                            recievedData.Add(data);
+                            sr.DiscardBufferedData();
+                        }
                     }
+                    
                 }
 
             }

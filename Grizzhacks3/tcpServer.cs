@@ -12,7 +12,12 @@ namespace Grizzhacks3
 {
     class tcpServer
     {
+
         List<TcpClient> connectedClients = new List<TcpClient>();
+        List<clsComputer> connectedComputers = new List<clsComputer>();
+
+        public List<clsLink> links = new List<clsLink>();
+
         TcpListener server;
         Boolean running = false;
         int port = 7865;
@@ -54,11 +59,11 @@ namespace Grizzhacks3
             }
         }
 
-        public void sendData(TcpClient c)
+        public void sendData(TcpClient c, String data)
         {
                 Stream s = c.GetStream();
                 StreamWriter sw = new StreamWriter(s);
-                sw.WriteLine("TestData");
+                sw.WriteLine(data);
                 sw.Flush();
         }
 
@@ -81,15 +86,90 @@ namespace Grizzhacks3
 
                             if (StringData != "")
                             {
-                                log += StringData + Environment.NewLine;
-                                sendData(client);
+                                
+                                if(StringData.Split(';')[0] == "pcupdate")
+                                {
+                                    foreach(clsComputer pc in connectedComputers)
+                                    {
+                                        if(pc.curID == Int32.Parse(StringData.Split(';')[1]))
+                                        {
+                                            pc.changeID(Int32.Parse(StringData.Split(';')[2]));
+                                        }
+                                    }
+                                }
+
+                                if(StringData.Split(';')[0] == "image")
+                                {
+                                    log += "New Image" + Environment.NewLine;
+                                    foreach(clsLink link in links)
+                                    {
+                                        if(link.computerNumber == Int32.Parse(StringData.Split(';')[1]) && link.phoneNumber == Int32.Parse(StringData.Split(';')[2]))
+                                        {
+                                            foreach(clsComputer pc in connectedComputers)
+                                            {
+                                                if (pc.curID == link.computerNumber)
+                                                {
+                                                    sendData(pc.c, "image;" + link.phoneNumber + ";" + StringData.Split(';')[3]);
+                                                    break;
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (StringData.Split(';')[0] == "pc")
+                                {
+                                    clsComputer newPc = new clsComputer(client, Int32.Parse(StringData.Split(';')[1]));
+                                    connectedComputers.Add(newPc);
+                                }
+
+                                if (StringData.Split(';')[0] == "newphone")
+                                {
+                                    clsComputer[] tempList = new clsComputer[connectedComputers.Count];
+                                    connectedComputers.CopyTo(tempList);
+                                    Boolean foundConnection = false;
+
+                                    foreach (clsComputer pc in tempList)
+                                    {
+                                        if(pc.curID == Int32.Parse(StringData.Split(';')[1]))
+                                        {
+                                            foundConnection = true;
+                                            connectedComputers.Add(pc);
+                                        }
+                                    }
+                                    
+                                    if(foundConnection == false)
+                                    {
+                                        sendData(client, "FAIL");
+                                    }
+                                    else
+                                    {
+                                        links.Add(new clsLink(Int32.Parse(StringData.Split(';')[1]), Int32.Parse(StringData.Split(';')[2])));
+                                        sendData(client, "GOOD");
+                                    }
+
+                                }
+
                             }
+
+                            sr.DiscardBufferedData();
 
                         }
                         catch
                         {
+                            foreach(clsComputer pc in connectedComputers)
+                            {
+                                if (pc.c == client)
+                                {
+                                    pc.curID = -1;
+                                }
+                            }
 
-                            Console.WriteLine("ERROR");
+                            connectedClients.Remove(client);
+                            client.Dispose();
+
+                            break;
 
                         }
                     }
