@@ -48,5 +48,14 @@ namespace Grizzhacks3Client
                 client.recievedData.Clear();
             }
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            Random r = new Random();
+            int oldID = pcID;
+            pcID = r.Next(10000, 99999);
+            label1.Text = "ID: " + pcID;
+            client.sendData("pcupdate;" + oldID + ";" + pcID);
+        }
     }
 }

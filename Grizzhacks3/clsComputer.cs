@@ -11,6 +11,7 @@ namespace Grizzhacks3
     {
         public TcpClient c;
         public int curID;
+        public bool linkedID = false;
         public List<int> pastIDs = new List<int>();
 
         public clsComputer(TcpClient client, int id)
@@ -21,7 +22,11 @@ namespace Grizzhacks3
 
         public void changeID(int id)
         {
-            pastIDs.Add(curID);
+            if(linkedID == true)
+            {
+                pastIDs.Add(curID);
+            }
+            
             curID = id;
         }
 

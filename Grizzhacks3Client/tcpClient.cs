@@ -41,7 +41,7 @@ namespace Grizzhacks3Client
             {
                 while (running)
                 {
-                    String data = sr.ReadLine();
+                    String data = sr.ReadToEnd();
                     if(data != "" && data != null)
                     {
                         if (!(recievedData.Contains(data)))
@@ -49,8 +49,7 @@ namespace Grizzhacks3Client
                             recievedData.Add(data);
                             sr.DiscardBufferedData();
                         }
-                    }
-                    
+                    }              
                 }
 
             }

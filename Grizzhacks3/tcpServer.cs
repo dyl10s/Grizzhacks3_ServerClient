@@ -100,7 +100,7 @@ namespace Grizzhacks3
 
                                 if(StringData.Split(';')[0] == "image")
                                 {
-                                    log += "New Image" + Environment.NewLine;
+                                    log += "New Image from:" + StringData.Split(';')[2] + " to:" + StringData.Split(';')[1] + Environment.NewLine;
                                     foreach(clsLink link in links)
                                     {
                                         if(link.computerNumber == Int32.Parse(StringData.Split(';')[1]) && link.phoneNumber == Int32.Parse(StringData.Split(';')[2]))
@@ -109,8 +109,19 @@ namespace Grizzhacks3
                                             {
                                                 if (pc.curID == link.computerNumber)
                                                 {
+                                                    log += "SentData" + Environment.NewLine;
                                                     sendData(pc.c, "image;" + link.phoneNumber + ";" + StringData.Split(';')[3]);
                                                     break;
+                                                }
+
+                                                foreach(int id in pc.pastIDs)
+                                                {
+                                                    if (id == link.computerNumber)
+                                                    {
+                                                        //log += "SentData" + Environment.NewLine;
+                                                        sendData(pc.c, "image;" + link.phoneNumber + ";" + StringData.Split(';')[3]);
+                                                        break;
+                                                    }
                                                 }
                                                 
                                             }
@@ -124,6 +135,39 @@ namespace Grizzhacks3
                                     connectedComputers.Add(newPc);
                                 }
 
+                                if(StringData.Split(';')[0] == "oldphone")
+                                {
+
+                                    bool foundDevice = false;
+
+                                    foreach (clsLink l in links)
+                                    {
+                                        if(l.computerNumber == Int32.Parse(StringData.Split(';')[1]))
+                                        {
+                                            if (l.phoneNumber == Int32.Parse(StringData.Split(';')[2]))
+                                            {
+                                                foundDevice = true;
+                                                break;
+                                            }
+
+                                            if (foundDevice == true)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if(foundDevice == true)
+                                    {
+                                        sendData(client, "GOOD");
+                                    }
+                                    else
+                                    {
+                                        sendData(client, "FAIL");
+                                    }
+
+                                }
+
                                 if (StringData.Split(';')[0] == "newphone")
                                 {
                                     clsComputer[] tempList = new clsComputer[connectedComputers.Count];
@@ -135,7 +179,8 @@ namespace Grizzhacks3
                                         if(pc.curID == Int32.Parse(StringData.Split(';')[1]))
                                         {
                                             foundConnection = true;
-                                            connectedComputers.Add(pc);
+                                            pc.linkedID = true;
+                                            //connectedComputers.Add(pc);
                                         }
                                     }
                                     

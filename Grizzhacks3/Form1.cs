@@ -24,5 +24,9 @@ namespace Grizzhacks3
             server.start();
         }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            textBox1.Text = server.log;
+        }
     }
 }
