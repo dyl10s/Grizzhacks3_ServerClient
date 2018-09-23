@@ -14,7 +14,14 @@ namespace Grizzhacks3Client
 
         public clsImage(String base64Code)
         {
+            try
+            {
                 img = (Bitmap)((new ImageConverter()).ConvertFrom(Convert.FromBase64String(base64Code)));
+            }
+            catch {
+                img = Properties.Resources.eoor;
+            }
+                
         }
 
     }

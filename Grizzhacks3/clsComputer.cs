@@ -10,14 +10,16 @@ namespace Grizzhacks3
     class clsComputer
     {
         public TcpClient c;
+        public string guid = "";
         public int curID;
         public bool linkedID = false;
         public List<int> pastIDs = new List<int>();
 
-        public clsComputer(TcpClient client, int id)
+        public clsComputer(TcpClient client, int id, string guid)
         {
             c = client;
             curID = id;
+            this.guid = guid;
         }
 
         public void changeID(int id)

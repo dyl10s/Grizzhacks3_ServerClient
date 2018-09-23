@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="clsComputer.cs" />
     <Compile Include="clsLink.cs" />
+    <Compile Include="clsSqlConnector.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

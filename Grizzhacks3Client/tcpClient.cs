@@ -12,6 +12,7 @@ namespace Grizzhacks3Client
     class tcpClient
     {
         TcpClient client = new TcpClient();
+        //35.237.232.103
         String ip = "35.237.232.103";
         public List<string> recievedData = new List<string>();
         Boolean running = true;
@@ -21,6 +22,9 @@ namespace Grizzhacks3Client
         public void start()
         {
             client.Connect(ip, port);
+
+            Thread recieveThread = new Thread(recievePackets);
+            recieveThread.Start();
         }
 
         public void sendData(String data)
@@ -30,9 +34,6 @@ namespace Grizzhacks3Client
             sw.WriteLine(data);
             sw.FlushAsync();
 
-            Thread recieveThread = new Thread(recievePackets);
-            recieveThread.Start();
-
         }
 
         public void recievePackets()
@@ -41,7 +42,7 @@ namespace Grizzhacks3Client
             {
                 while (running)
                 {
-                    String data = sr.ReadToEnd();
+                    String data = sr.ReadLine();
                     if(data != "" && data != null)
                     {
                         if (!(recievedData.Contains(data)))
